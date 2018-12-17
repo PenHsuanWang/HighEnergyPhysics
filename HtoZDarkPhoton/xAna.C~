@@ -1,0 +1,471 @@
+#include <vector>
+#include <iostream>
+#include <TH1D.h>
+#include <TH2F.h>
+#include <TRandom.h>
+#include <TLorentzVector.h>
+
+#include "puweicalc.h"
+#include "untuplizer.h"
+#include "Utilities.h"
+
+#include "Module/ElectronMatch.h"
+#include "Module/PhotonMatch.h"
+#include "Module/MuonMatch.h"
+
+#include "ElectronSelections.h"
+#include "ElectronSelections_HEEP.h"
+
+void xAna(const char** inpaths, int npaths, const char* outpath = "minitree.root", Long64_t ev1 = 0, Long64_t ev2 = -1, 
+	  float xs =-1,int isEleChannel = 1, int RunFile = 0) {
+
+  /* The analysis entry point.
+   *
+   * inpaths = array of paths to files with ggNtuplizer's TTrees;
+   * npaths = size of inpaths;
+   * outpath = path to output root file;
+   * [ev1, ev2) = event region to process (ev1 is included, ev2 is excluded).
+   */
+
+  //Get Photon SFs histogram
+  TFile *f = new TFile("/afs/cern.ch/user/p/pwang/www/FittingPlot_80X_CombinRunBCD_07_27/nominal/egammaEffi.txt_SF2DMVA.root", "READ");
+  TH2F *h_MVA_phoSFs = (TH2F*) f->Get("EGamma_SF2D");
+
+  
+  // open tree(s) with events to be processed
+  TreeReader data(inpaths, npaths);
+  
+  // print out which type of variables should be associated with tree branches
+  //data.Print();
+
+  // prepare output tree
+  TFile* fo = TFile::Open(outpath, "RECREATE");
+  TTree* outtree = new TTree("t", "mini tree");
+
+  // do whathever preparations are necessary for, if MC information is present
+  // pileup reweighting for MC
+  PUWeightCalculator puCalc;
+  if (data.HasMC()) {
+    puCalc.Init("puweights_80X/PU_histo_13TeV_GoldenJSON_63000nb.root");
+  }
+
+  // histogram for work flow
+  TH1D * WorkFlow = new TH1D("WorkFlow", "WorkFlow", 10, 1, 11);
+
+  // variables to be associated with the output tree branches
+  Float_t puwei, generatorWeight;
+  Float_t Ele1Pt, Ele1Eta, Ele1Phi;
+  Float_t Ele2Pt, Ele2Eta, Ele2Phi;
+  Float_t Muon1Pt, Muon1Eta, Muon1Phi;
+  Float_t Muon2Pt, Muon2Eta, Muon2Phi;
+  Float_t Photon1Pt, Photon1Eta, Photon1Phi;
+  Float_t diEleM, diElePhotonM;
+  Float_t diMuonM, diMuonPhotonM;
+  Float_t diEleDr, diMuonDr;
+  Int_t Ele1Counter, Ele2Counter, Muon1Counter, Muon2Counter, Photon1Counter;
+  Double_t Entries;
+  Float_t PhoSFs;
+  Float_t totWeiForFit;
+
+  Int_t nVtx;
+
+  if (data.HasMC()){
+    outtree->Branch("puwei", &puwei);
+    outtree->Branch("xs", &xs);
+    outtree->Branch("generatorWeight", &generatorWeight);
+    outtree->Branch("Entries", &Entries);
+    outtree->Branch("PhoSFs", &PhoSFs);
+    outtree->Branch("totWeiForFit", &totWeiForFit);
+  }
+
+  outtree->Branch("Ele1Pt", &Ele1Pt);
+  outtree->Branch("Ele1Eta", &Ele1Eta);
+  outtree->Branch("Ele1Phi", &Ele1Phi);
+  outtree->Branch("Ele2Pt", &Ele2Pt);
+  outtree->Branch("Ele2Eta", &Ele2Eta);
+  outtree->Branch("Ele2Phi", &Ele2Phi);
+  outtree->Branch("Muon1Pt", &Muon1Pt);
+  outtree->Branch("Muon1Eta", &Muon1Eta);
+  outtree->Branch("Muon1Phi", &Muon1Phi);
+  outtree->Branch("Muon2Pt", &Muon2Pt);
+  outtree->Branch("Muon2Eta", &Muon2Eta);
+  outtree->Branch("Muon2Phi", &Muon2Phi);
+  outtree->Branch("Photon1Pt", &Photon1Pt);
+  outtree->Branch("Photon1Eta", &Photon1Eta);
+  outtree->Branch("Photon1Phi", &Photon1Phi);
+  outtree->Branch("diEleDr", &diEleDr);
+  outtree->Branch("diEleM", &diEleM); // two Electron invariant mass
+  outtree->Branch("diElePhotonM", &diElePhotonM); // two Electron + one photon invariant mass
+  outtree->Branch("diMuonDr", &diMuonDr);
+  outtree->Branch("diMuonM", &diMuonM); // two Muon invariant mass
+  outtree->Branch("diMuonPhotonM", &diMuonPhotonM); // two Muon + one photon invariant mass
+  outtree->Branch("Ele1Counter", &Ele1Counter);
+  outtree->Branch("Ele2Counter", &Ele2Counter);
+  outtree->Branch("Muon1Counter", &Muon1Counter);
+  outtree->Branch("Muon2Counter", &Muon2Counter);
+  outtree->Branch("Photon1Counter", &Photon1Counter);
+  outtree->Branch("nVtx", &nVtx);
+
+  Entries=data.GetEntriesFast();
+
+
+  // event loop
+  // update upper boundary of the region of events to process, if necessary
+  if (ev2 < 0) ev2 = data.GetEntriesFast();
+  if (ev2 > data.GetEntriesFast()) ev2 = data.GetEntriesFast();
+
+
+  for (Long64_t ev = ev1; ev < ev2; ++ev) {
+
+    /*
+      Event Loop processing steps
+                                                                                     ////////////////
+      ///////////////////////////////      ///////////////     ////////////////  --> // Election   //     ///////////////     /////////////////
+      // Initialized the variables //      // Apply HLT //     // in-time PU //      // Selection  // --> // Photon    //     // Calculating //
+      // which is going to store   //  --> //           // --> //            //      ////////////////     // Selection // --> // Mll, Mllg,  //
+      // into the minitree         //      //           //     //            //                           ///////////////     // dR, .. etc  //
+      ///////////////////////////////      ///////////////     ////////////////  --> //////////////// -->                     /////////////////
+                                                                                     // Muon       //
+                                                                                     // Selection  //
+                                                                                     ////////////////
+
+     */
+
+    // initialized the variable for store those information
+    Ele1Counter=Ele2Counter=Muon1Counter=Muon2Counter=Photon1Counter=0;
+    Ele1Pt=Ele1Eta=Ele1Phi=0;
+    Ele2Pt=Ele2Eta=Ele2Phi=0;
+    Muon1Pt=Muon1Eta=Muon1Phi=0;
+    Muon2Pt=Muon2Eta=Muon2Phi=0;
+    Photon1Pt=Photon1Eta=Photon1Phi=0;
+    diEleM=diElePhotonM=0;
+    diEleDr=0;
+    diMuonM=diMuonPhotonM=0;
+    diMuonDr=0;
+    PhoSFs=1;
+    totWeiForFit=1;
+
+    // print progress
+    if (ev % 50000 == 0)
+      fprintf(stderr, "Processing event %lli of %lli\n", ev + 1, data.GetEntriesFast());
+    
+    data.GetEntry(ev);
+
+    Int_t run = data.GetInt("run");
+    nVtx = data.GetInt("nVtx"); // nVtx has been defiined before
+
+    if (data.HasMC()) { 
+      Float_t genWeight = data.GetFloat("genWeight"); 
+      if (genWeight < 0) {generatorWeight = -1;}
+      if (genWeight >= 0) {generatorWeight = 1;}
+    }
+
+    // HLT
+    Long64_t HLTEleMuX = (Long64_t) data.GetLong64("HLTEleMuX");
+    if (isEleChannel == 0){ // muon channel
+      //if (abs(HLTEleMuX>>25&1) != 1) continue; // HLT_IsoMu27_v (Single Muon Trigger)
+      // HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v or HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v
+      if ( ( abs(HLTEleMuX>>20&1) != 1  ) && ( abs(HLTEleMuX>>21&1) != 1  ) ) continue;
+    }
+
+    if (isEleChannel == 1) { // electron channel
+
+    }
+
+    // PU reweighting
+    if (data.HasMC()) {
+      float* puTrue = data.GetPtrFloat("puTrue");
+      puwei = (float) puCalc.GetWeight(run, puTrue[1]); // in-time PU
+    }
+
+    // electron channel reco level study
+
+    // electron
+    Int_t nEle          = NULL;
+    Float_t* elePt      = NULL;
+    Float_t* eleEta     = NULL;
+    Float_t* elePhi       = NULL;
+    Float_t* eleSCEta     = NULL;
+    Float_t* eleSCPhi     = NULL;
+    UShort_t* eleIDbit    = NULL;
+    Float_t* eleSCEn      = NULL;
+    Float_t* eleSigmaIEtaIEta = NULL;
+    Float_t* eleHoverE   = NULL;
+    Int_t* eleMissHits   = NULL;
+    Float_t* eleD0       = NULL;
+    
+    // electron
+    nEle          = data.GetInt("nEle");
+    elePt      = data.GetPtrFloat("eleCalibPt");
+    //elePt      = data.GetPtrFloat("elePt");
+    eleEta     = data.GetPtrFloat("eleEta");
+    elePhi       = data.GetPtrFloat("elePhi");
+    eleSCEta     = data.GetPtrFloat("eleSCEta");
+    eleSCPhi     = data.GetPtrFloat("eleSCPhi");
+    eleIDbit    = (UShort_t*) data.GetPtrShort("eleIDbit");
+    eleSCEn      = data.GetPtrFloat("eleSCEn");
+    eleSigmaIEtaIEta = data.GetPtrFloat("eleSigmaIEtaIEta");
+    eleHoverE   = data.GetPtrFloat("eleHoverE");
+    eleMissHits   = data.GetPtrInt("eleMissHits");
+    eleD0       = data.GetPtrFloat("eleD0");
+    
+    Int_t ele_index[2]={-999, -999};
+    Int_t eleAll = 0;
+    Int_t eleAcceptance = 0;
+    
+    Int_t LeadingEleFound = 0; // whether Leading muon is found or not (0=not found , 1=found)
+    for (int i=0 ; i<nEle ; ++i) {
+      
+      eleAll++;
+      if (eleAll == 2){
+	WorkFlow->Fill(1); // total events
+      }
+      
+      if (fabs(eleSCEta[i]) > 1.4442 && fabs(eleSCEta[i]) < 1.566) continue; // Eta cut
+      if (fabs(eleSCEta[i]) > 2.5) continue; // Eta cut
+      
+      if (LeadingEleFound == 1){
+	if (elePt[i]<5.) continue; // leading electron pt cut is 5 GeV
+      }
+      
+      if (LeadingEleFound == 0){
+	if (elePt[i]<30.) continue; // leading electron pt cut is 25 GeV
+	LeadingEleFound=1;
+      }
+      
+      // count acceptance efficiency      
+      eleAcceptance++;
+      
+      if (eleAcceptance == 2){
+	WorkFlow->Fill(3); // pass two electron preselection
+      }
+      
+      //if (abs(eleIDbit[i]>>4&1) == 0) continue; // HEEP cut
+      //if (isHEEPele(data, i) == 0) continue;
+      if (ElectronIDCutBasedRunII(1, data, i) == 0) continue; // mini isolation from Shilpi # 08/18/16  
+      
+      // sort
+      if (ele_index[0] == -999 && ele_index[1] == -999) { ele_index[0]=i; }
+      else if(ele_index[0] != -999 && ele_index[1] == -999) {
+	if (elePt[i] >  elePt[ele_index[0]]) { ele_index[1] = ele_index[0]; ele_index[0] = i; }
+	else if (elePt[i] <= elePt[ele_index[0]]) { ele_index[1] = i; }
+      }
+      else {
+	if (elePt[i] >  elePt[ele_index[0]]    )                                  { ele_index[1] = ele_index[0]; ele_index[0] = i; }
+	else if (elePt[i] <= elePt[ele_index[0]] &&  elePt[i] > elePt[ele_index[1]])  { ele_index[1] = i;                                }
+	else if (elePt[i] <= elePt[ele_index[0]] &&  elePt[i] < elePt[ele_index[1]]) continue;
+      } // end of sort
+    } // end of electron loop
+    
+    if (ele_index[0] != -999){
+      Ele1Pt=elePt[ele_index[0]]; Ele1Eta=eleEta[ele_index[0]]; Ele1Phi=elePhi[ele_index[0]];
+      Ele1Counter=1;
+    }
+    if (ele_index[1] != -999){
+      Ele2Pt=elePt[ele_index[1]]; Ele2Eta=eleEta[ele_index[1]]; Ele2Phi=elePhi[ele_index[1]];
+      Ele2Counter=1;
+    } // the section pick up two electrons after sorting     
+    
+    
+    // Muon selection
+    
+    Int_t    nMu             = data.GetInt("nMu");
+    Float_t* muPt            = data.GetPtrFloat("muPt");
+    Float_t* muEta           = data.GetPtrFloat("muEta");
+    Float_t* muPhi           = data.GetPtrFloat("muPhi");
+    Int_t*   muCharge        = data.GetPtrInt("muCharge");
+    Int_t*   muType          = data.GetPtrInt("muType");   
+    Float_t* muChi2NDF       = data.GetPtrFloat("muChi2NDF"); // chi square / Number Of Degree
+    Int_t*   muStations      = data.GetPtrInt("muStations");
+    Int_t*   muMatches       = data.GetPtrInt("muMatches");
+    Float_t* muPFChIso       = data.GetPtrFloat("muPFChIso"); // Sum of Charged Hadron Pt
+    Float_t* muPFPhoIso      = data.GetPtrFloat("muPFPhoIso"); // Sum of Photon Et
+    Float_t* muPFNeuIso      = data.GetPtrFloat("muPFNeuIso"); // Sum of Neutral Hadron Et
+    Float_t* muPFPUIso       = data.GetPtrFloat("muPFPUIso"); // Sum of PU(pile up) Pt
+    Float_t* muIsoTrk        = data.GetPtrFloat("muIsoTrk"); // Tracker-base isolation cut
+    Float_t* muD0            = data.GetPtrFloat("muD0"); // Impact parameter about xy plane
+    Float_t* muDz            = data.GetPtrFloat("muDz"); // Impact parameter about z axis
+    Int_t*   muTrkLayers     = data.GetPtrInt("muTrkLayers");
+    
+    Int_t mu_index[2]={-999, -999};
+    Int_t muAll = 0;
+    Int_t muAcceptance = 0; // how many muon within acceeptance region
+    
+    Int_t LeadingMuFound = 0; // whether Leading muon is found or not (0=not found , 1=found)
+    // muon loop, selection up the event within acceptance area only. Do mc true muon matching
+    for (int i=0 ; i<nMu ; ++i) {
+      
+      muAll++;
+      if (muAll == 2){
+	WorkFlow->Fill(1); // total events
+      }
+      
+      if (fabs(muEta[i]) > 2.4) continue; // Eta cut
+      
+      if (LeadingMuFound == 1){
+	if (muPt[i]<10.) continue; // trailing muon in EB pt cut is 10 GeV
+      }
+      
+      if (LeadingMuFound == 0){
+	if (muPt[i]<20.) continue; // leading muon in EB pt cut is 20 GeV
+	LeadingMuFound=1;
+      }
+      
+      // count acceptance efficiency      
+      muAcceptance++;
+      if (muAcceptance == 2){
+	WorkFlow->Fill(3); // pass two muon preselection
+      }
+      
+      // Loose muon ID
+      //if ( ((muType[i] >> 5) &1) != 1) continue; // isPF Muon?
+      if ( ( ((muType[i] >> 1) &1) != 1 ) && ( ((muType[i] >> 2) &1) != 1 ) ) continue; // isTracker Muon or isGlobal Muon
+      
+      // sort
+      if (mu_index[0] == -999 && mu_index[1] == -999) { mu_index[0]=i; }
+      else if(mu_index[0] != -999 && mu_index[1] == -999) {
+	if (muPt[i] >  muPt[mu_index[0]]) { mu_index[1] = mu_index[0]; mu_index[0] = i; }
+	else if (muPt[i] <= muPt[mu_index[0]]) { mu_index[1] = i; }
+      }
+      else {
+	if (muPt[i] >  muPt[mu_index[0]]    )                                  { mu_index[1] = mu_index[0]; mu_index[0] = i; }
+	else if (muPt[i] <= muPt[mu_index[0]] &&  muPt[i] > muPt[mu_index[1]])  { mu_index[1] = i;                                }
+	else if (muPt[i] <= muPt[mu_index[0]] &&  muPt[i] < muPt[mu_index[1]]) continue;
+      } // end of sort
+    } // end of muon loop
+    
+    if (mu_index[0] != -999){
+      if ( ((muType[mu_index[0]] >> 5) &1) == 1 ){ // is PF Muon only applied on Leading muon
+	Muon1Pt=muPt[mu_index[0]]; Muon1Eta=muEta[mu_index[0]]; Muon1Phi=muPhi[mu_index[0]];
+	Muon1Counter=1;
+      }
+    }
+    if (mu_index[1] != -999){
+      Muon2Pt=muPt[mu_index[1]]; Muon2Eta=muEta[mu_index[1]]; Muon2Phi=muPhi[mu_index[1]];
+      Muon2Counter=1;
+    } // the section for pick up mcTrue muon after sorting
+    
+    
+    // photon selection
+    
+    //photon
+    Int_t nPho        = NULL;
+    Int_t* phoEleVeto = NULL;
+    Float_t* phoEt    = NULL;
+    Float_t* phoEta   = NULL;
+    Float_t* phoPhi   = NULL;
+    Float_t* phoSCEta = NULL;
+    Float_t* phoSCPhi = NULL;
+    Float_t* phoIDMVA = NULL;
+    UShort_t* phoIDbit = (UShort_t*) NULL;
+      
+    Float_t* phoHoverE = NULL;
+    Float_t* phoSigmaIEtaIEtaFull5x5 = NULL;
+    Float_t* phoPFPhoIso = NULL;
+    Float_t* phoPFChWorstIso = NULL;
+    Float_t* phoR9 = NULL;
+      
+    // photon
+    nPho        = data.GetInt("nPho");
+    phoEleVeto = data.GetPtrInt("phoEleVeto");
+    phoEt    = data.GetPtrFloat("phoCalibEt");
+    //phoEt    = data.GetPtrFloat("phoEt");
+    phoEta   = data.GetPtrFloat("phoEta");
+    phoPhi   = data.GetPtrFloat("phoPhi");
+    phoSCEta = data.GetPtrFloat("phoSCEta");
+    phoSCPhi = data.GetPtrFloat("phoSCPhi");
+    phoIDMVA = data.GetPtrFloat("phoIDMVA");
+    phoIDbit = (UShort_t*) data.GetPtrShort("phoIDbit");
+      
+    phoHoverE = data.GetPtrFloat("phoHoverE");
+    phoSigmaIEtaIEtaFull5x5 = data.GetPtrFloat("phoSigmaIEtaIEtaFull5x5");
+    phoPFPhoIso = data.GetPtrFloat("phoPFPhoIso");
+    phoPFChWorstIso = data.GetPtrFloat("phoPFChWorstIso");
+    phoR9 = data.GetPtrFloat("phoR9");
+
+    Int_t phoPreSele=0, phoDr=0, phoVeto=0;
+    for (Int_t i=0 ; i<nPho ; ++i){
+      
+      if (Photon1Counter == 1) continue;
+      
+      if (phoEt[i]<20.) continue;
+      if (fabs(phoSCEta[i]) > 1.4442 && fabs(phoSCEta[i]) < 1.56) continue;
+      if (fabs(phoSCEta[i]) > 2.5) continue;
+
+      int binEtaEt=-999;
+      binEtaEt=h_MVA_phoSFs->FindBin(phoEta[i], phoEt[i]);
+      PhoSFs=h_MVA_phoSFs->GetBinContent(binEtaEt);
+
+      phoPreSele=1;
+      
+      if (Ele1Counter == 1 || Ele2Counter == 1){
+	if (deltaR(Ele1Eta, Ele1Phi, phoEta[i], phoPhi[i]) < 0.8 ||
+	    deltaR(Ele2Eta, Ele2Phi, phoEta[i], phoPhi[i]) < 0.8) continue;
+      } // photon , electron dR cut
+
+      if (Muon1Counter == 1 || Muon2Counter == 1){
+	if (deltaR(Muon1Eta, Muon1Phi, phoEta[i], phoPhi[i]) < 0.8 ||
+            deltaR(Muon2Eta, Muon2Phi, phoEta[i], phoPhi[i]) < 0.8) continue;
+      } // photon , muon dR cut
+
+
+      phoDr=1;
+      if (phoEleVeto[i] == 0) continue;
+      phoVeto=1;
+      
+      {
+	if (fabs(phoSCEta[i]) < 1.4442 && phoIDMVA[i] < 0.374) continue;
+	if (fabs(phoSCEta[i]) > 1.566 && phoIDMVA[i] < 0.336) continue;
+      }
+      
+      if (RunFile == 1 && PhoMatch(data, phoEta[i], phoPhi[i]) == 1 ) continue;
+
+      Photon1Eta=phoEta[i]; Photon1Phi=phoPhi[i];
+      Photon1Pt=phoEt[i];
+      Photon1Counter=1;
+      break;
+      
+    } // the loop for pick up EB photon
+    
+    totWeiForFit=PhoSFs*puwei;
+
+    // diLepton Dr
+    diEleDr=deltaR(Ele1Eta, Ele1Phi, Ele2Eta, Ele2Phi);  // electron pair dR
+    diMuonDr=deltaR(Muon1Eta, Muon1Phi, Muon2Eta, Muon2Phi);  // muon pair dR
+
+    // diLepton Mass and Three body invariant mass
+    TLorentzVector fourVec_Ele1, fourVec_Ele2, fourVec_Muon1, fourVec_Muon2,  fourVec_Mee, fourVec_Mmumu, fourVec_Photon1, 
+      fourVec_Meeg, fourVec_Mmumug;
+
+    fourVec_Ele1.SetPtEtaPhiM(Ele1Pt, Ele1Eta, Ele1Phi, 0.511*0.001);
+    fourVec_Ele2.SetPtEtaPhiM(Ele2Pt, Ele2Eta, Ele2Phi, 0.511*0.001);
+    fourVec_Muon1.SetPtEtaPhiM(Muon1Pt, Muon1Eta, Muon1Phi, 0.105);
+    fourVec_Muon2.SetPtEtaPhiM(Muon2Pt, Muon2Eta, Muon2Phi, 0.105);
+    fourVec_Photon1.SetPtEtaPhiM(Photon1Pt, Photon1Eta, Photon1Phi, 0);
+    fourVec_Mee=fourVec_Ele1+fourVec_Ele2;
+    fourVec_Mmumu=fourVec_Muon1+fourVec_Muon2;
+    fourVec_Meeg=fourVec_Ele1+fourVec_Ele2+fourVec_Photon1;
+    fourVec_Mmumug=fourVec_Muon1+fourVec_Muon2+fourVec_Photon1;
+    
+    diEleM=fourVec_Mee.M();
+    diMuonM=fourVec_Mmumu.M();
+
+    diElePhotonM=fourVec_Meeg.M();
+    diMuonPhotonM=fourVec_Mmumug.M();
+    
+    if (Muon1Counter == 1 && Muon2Counter == 1) WorkFlow->Fill(4); // pass two electron selection
+    if (Muon1Counter == 1 && Muon2Counter == 1 && phoPreSele == 1) WorkFlow->Fill(5);
+    if (Muon1Counter == 1 && Muon2Counter == 1 && Photon1Counter == 1) WorkFlow->Fill(6); // pass two electron and one photon selection
+    
+    if (Muon1Counter == 1 && Muon2Counter == 1 && Photon1Counter == 1 && diMuonPhotonM > 120 && diMuonPhotonM < 130) {outtree->Fill();}    
+  } // event loop
+  
+  fprintf(stderr, "Processed all events\n");
+
+  // flush caches, close the output                                                                             
+  outtree->Write("", TObject::kOverwrite);
+  WorkFlow->Write();
+  delete outtree;
+  delete fo;
+  delete h_MVA_phoSFs;
+}

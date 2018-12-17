@@ -1,0 +1,511 @@
+{
+  gSystem->SetBuildDir("tmpdir", kTRUE);
+
+  gROOT->LoadMacro("xAna.C+");
+
+  gStyle->SetOptStat(0);
+
+
+  for (Int_t i=13 ; i<=24 ; i++){
+
+
+    if (i == 1){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_00/job_spring16_Zdgamma_ZToEE_m_1.root" };
+      xAna(inpaths, 1,"minitree_Zdgamma_ZToEE_m_1.root", 0, -1, -1, 1);
+    }
+
+    if (i == 2){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_00/job_spring16_Zdgamma_ZToEE_m_3.root" };
+      xAna(inpaths, 1,"minitree_Zdgamma_ZToEE_m_3.root", 0, -1, -1, 1);
+    }
+
+    if (i == 3){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_00/job_spring16_Zdgamma_ZToEE_m_5.root" };
+      xAna(inpaths, 1,"minitree_Zdgamma_ZToEE_m_5.root", 0, -1, -1, 1);
+    }
+
+    if (i == 4){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_00/job_spring16_Zdgamma_ZToEE_m_10.root" };
+      xAna(inpaths, 1,"minitree_Zdgamma_ZToEE_m_10.root", 0, -1, -1, 1);
+    }
+
+    if (i == 5){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_00/job_spring16_Zdgamma_ZToEE_m_15.root" };
+      xAna(inpaths, 1,"minitree_Zdgamma_ZToEE_m_15.root", 0, -1, -1, 1);
+    }
+
+    if (i == 6){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_00/job_spring16_Zdgamma_ZToEE_m_20.root" };
+      xAna(inpaths, 1,"minitree_Zdgamma_ZToEE_m_20.root", 0, -1, -1, 1);
+    }
+
+    if (i == 7){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_00/job_spring16_Zdgamma_ZToEE_m_25.root" };
+      xAna(inpaths, 1,"minitree_Zdgamma_ZToEE_m_25.root", 0, -1, -1, 1);
+    }
+
+    if (i == 8){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_00/job_spring16_Zdgamma_ZToEE_m_30.root" };
+      xAna(inpaths, 1,"minitree_Zdgamma_ZToEE_m_30.root", 0, -1, -1, 1);
+    }
+
+    if (i == 9){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_00/job_spring16_Zdgamma_ZToEE_m_35.root" };
+      xAna(inpaths, 1,"minitree_Zdgamma_ZToEE_m_35.root", 0, -1, -1, 1);
+    }
+
+    if (i == 10){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_00/job_spring16_Zdgamma_ZToEE_m_40.root" };
+      xAna(inpaths, 1,"minitree_Zdgamma_ZToEE_m_40.root", 0, -1, -1, 1);
+    }
+
+    if (i == 11){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_00/job_spring16_Zdgamma_ZToEE_m_45.root" };
+      xAna(inpaths, 1,"minitree_Zdgamma_ZToEE_m_45.root", 0, -1, -1, 1);
+    }
+
+    if (i == 12){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_00/job_spring16_Zdgamma_ZToEE_m_50.root" };
+      xAna(inpaths, 1,"minitree_Zdgamma_ZToEE_m_50.root", 0, -1, -1, 1);
+    }
+    
+
+    if (i == 13){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_00/job_spring16_Zdgamma_ZToMuMu_m_1.root" };
+      xAna(inpaths, 1,"minitree_Zdgamma_ZToMuMu_m_1.root", 0, -1, -1, 0);
+    }
+
+    if (i == 14){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_00/job_spring16_Zdgamma_ZToMuMu_m_3.root" };
+      xAna(inpaths, 1,"minitree_Zdgamma_ZToMuMu_m_3.root", 0, -1, -1, 0);
+    }
+
+    if (i == 15){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_00/job_spring16_Zdgamma_ZToMuMu_m_5.root" };
+      xAna(inpaths, 1,"minitree_Zdgamma_ZToMuMu_m_5.root", 0, -1, -1, 0);
+    }
+
+    if (i == 16){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_00/job_spring16_Zdgamma_ZToMuMu_m_10.root" };
+      xAna(inpaths, 1,"minitree_Zdgamma_ZToMuMu_m_10.root", 0, -1, -1, 0);
+    }
+
+    if (i == 17){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_00/job_spring16_Zdgamma_ZToMuMu_m_15.root" };
+      xAna(inpaths, 1,"minitree_Zdgamma_ZToMuMu_m_15.root", 0, -1, -1, 0);
+    }
+
+    if (i == 18){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_00/job_spring16_Zdgamma_ZToMuMu_m_20.root" };
+      xAna(inpaths, 1,"minitree_Zdgamma_ZToMuMu_m_20.root", 0, -1, -1, 0);
+    }
+
+    if (i == 19){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_00/job_spring16_Zdgamma_ZToMuMu_m_25.root" };
+      xAna(inpaths, 1,"minitree_Zdgamma_ZToMuMu_m_25.root", 0, -1, -1, 0);
+    }
+
+    if (i == 20){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_00/job_spring16_Zdgamma_ZToMuMu_m_30.root" };
+      xAna(inpaths, 1,"minitree_Zdgamma_ZToMuMu_m_30.root", 0, -1, -1, 0);
+    }
+
+    if (i == 21){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_00/job_spring16_Zdgamma_ZToMuMu_m_35.root" };
+      xAna(inpaths, 1,"minitree_Zdgamma_ZToMuMu_m_35.root", 0, -1, -1, 0);
+    }
+
+    if (i == 22){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_00/job_spring16_Zdgamma_ZToMuMu_m_40.root" };
+      xAna(inpaths, 1,"minitree_Zdgamma_ZToMuMu_m_40.root", 0, -1, -1, 0);
+    }
+
+    if (i == 23){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_00/job_spring16_Zdgamma_ZToMuMu_m_45.root" };
+      xAna(inpaths, 1,"minitree_Zdgamma_ZToMuMu_m_45.root", 0, -1, -1, 0);
+    }
+
+    if (i == 24){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_00/job_spring16_Zdgamma_ZToMuMu_m_50.root" };
+      xAna(inpaths, 1,"minitree_Zdgamma_ZToMuMu_m_50.root", 0, -1, -1, 0);
+    }
+
+    // XZg sample
+
+    if (i == 25){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m300.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToEE_m_300.root", 0, -1, -1, 1); // electron channel
+    }
+
+    if (i == 26){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m350.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToEE_m_350.root", 0, -1, -1, 1);
+    }
+
+    if (i == 27){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m400.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToEE_m_400.root", 0, -1, -1, 1);
+    }
+
+    if (i == 28){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m450.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToEE_m_450.root", 0, -1, -1, 1);
+    }
+
+    if (i == 29){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m500.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToEE_m_500.root", 0, -1, -1, 1);
+    }
+
+    if (i == 30){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m740.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToEE_m_740.root", 0, -1, -1, 1);
+    }
+
+    if (i == 31){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m745.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToEE_m_745.root", 0, -1, -1, 1);
+    }
+
+    if (i == 32){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m750.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToEE_m_750.root", 0, -1, -1, 1);
+    }
+
+    if (i == 33){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m755.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToEE_m_755.root", 0, -1, -1, 1);
+    }
+
+    if (i == 34){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m760.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToEE_m_760.root", 0, -1, -1, 1);
+    }
+
+    if (i == 35){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m1000.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToEE_m_1000.root", 0, -1, -1, 1);
+    }
+
+    if (i == 36){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m1250.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToEE_m_1250.root", 0, -1, -1, 1);
+    }
+
+    if (i == 37){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m1500.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToEE_m_1500.root", 0, -1, -1, 1);
+    }
+
+    if (i == 38){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m1750.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToEE_m_1750.root", 0, -1, -1, 1);
+    }
+
+    if (i == 39){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m2000.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToEE_m_2000.root", 0, -1, -1, 1);
+    }
+
+    if (i == 40){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m2250.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToEE_m_2250.root", 0, -1, -1, 1);
+    }
+
+    if (i == 41){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m2500.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToEE_m_2500.root", 0, -1, -1, 1);
+    }
+
+    if (i == 42){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m2750.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToEE_m_2750.root", 0, -1, -1, 1);
+    }
+
+    if (i == 43){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m3000.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToEE_m_3000.root", 0, -1, -1, 1);
+    }
+
+    if (i == 44){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m3250.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToEE_m_3250.root", 0, -1, -1, 1);
+    }
+
+    if (i == 45){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m3500.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToEE_m_3500.root", 0, -1, -1, 1);
+    }
+
+    if (i == 46){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m3750.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToEE_m_3750.root", 0, -1, -1, 1);
+    }
+
+    if (i == 47){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m4000.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToEE_m_4000.root", 0, -1, -1, 1);
+    }
+
+    if (i == 48){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m4500.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToEE_m_4500.root", 0, -1, -1, 1);
+    }
+
+    if (i == 49){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m5000.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToEE_m_5000.root", 0, -1, -1, 1);
+    }
+
+    if (i == 50){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m5500.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToEE_m_5500.root", 0, -1, -1, 1);
+    }
+
+    if (i == 51){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m6000.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToEE_m_6000.root", 0, -1, -1, 1);
+    }
+
+    if (i == 52){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m6500.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToEE_m_6500.root", 0, -1, -1, 1);
+    }
+
+    if (i == 53){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m7000.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToEE_m_7000.root", 0, -1, -1, 1);
+    }
+
+
+
+    if (i == 54){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m300.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToMuMu_m_300.root", 0, -1, -1, 0); // muon channel
+    }
+
+    if (i == 55){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m350.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToMuMu_m_350.root", 0, -1, -1, 0);
+    }
+
+    if (i == 56){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m400.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToMuMu_m_400.root", 0, -1, -1, 0);
+    }
+
+    if (i == 57){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m450.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToMuMu_m_450.root", 0, -1, -1, 0);
+    }
+
+    if (i == 58){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m500.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToMuMu_m_500.root", 0, -1, -1, 0);
+    }
+
+    if (i == 59){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m740.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToMuMu_m_740.root", 0, -1, -1, 0);
+    }
+
+    if (i == 60){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m745.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToMuMu_m_745.root", 0, -1, -1, 0);
+    }
+
+    if (i == 61){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m750.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToMuMu_m_750.root", 0, -1, -1, 0);
+    }
+
+    if (i == 62){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m755.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToMuMu_m_755.root", 0, -1, -1, 0);
+    }
+
+    if (i == 63){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m760.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToMuMu_m_760.root", 0, -1, -1, 0);
+    }
+
+    if (i == 64){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m1000.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToMuMu_m_1000.root", 0, -1, -1, 0);
+    }
+
+    if (i == 65){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m1250.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToMuMu_m_1250.root", 0, -1, -1, 0);
+    }
+
+    if (i == 66){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m1500.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToMuMu_m_1500.root", 0, -1, -1, 0);
+    }
+
+    if (i == 67){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m1750.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToMuMu_m_1750.root", 0, -1, -1, 0);
+    }
+
+    if (i == 68){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m2000.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToMuMu_m_2000.root", 0, -1, -1, 0);
+    }
+
+    if (i == 69){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m2250.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToMuMu_m_2250.root", 0, -1, -1, 0);
+    }
+
+    if (i == 70){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m2500.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToMuMu_m_2500.root", 0, -1, -1, 0);
+    }
+
+    if (i == 71){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m2750.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToMuMu_m_2750.root", 0, -1, -1, 0);
+    }
+
+    if (i == 72){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m3000.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToMuMu_m_3000.root", 0, -1, -1, 0);
+    }
+
+    if (i == 73){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m3250.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToMuMu_m_3250.root", 0, -1, -1, 0);
+    }
+
+    if (i == 74){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m3500.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToMuMu_m_3500.root", 0, -1, -1, 0);
+    }
+
+    if (i == 75){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m3750.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToMuMu_m_3750.root", 0, -1, -1, 0);
+    }
+
+    if (i == 76){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m4000.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToMuMu_m_4000.root", 0, -1, -1, 0);
+    }
+
+    if (i == 77){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m4500.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToMuMu_m_4500.root", 0, -1, -1, 0);
+    }
+
+    if (i == 78){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m5000.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToMuMu_m_5000.root", 0, -1, -1, 0);
+    }
+
+    if (i == 79){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m5500.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToMuMu_m_5500.root", 0, -1, -1, 0);
+    }
+
+    if (i == 80){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m6000.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToMuMu_m_6000.root", 0, -1, -1, 0);
+    }
+
+    if (i == 81){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m6500.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToMuMu_m_6500.root", 0, -1, -1, 0);
+    }
+
+    if (i == 82){
+      const char* inpaths[] =
+        {"/data6/ggNtuples/V08_00_11_01/job_spring16_XZg_W0p014_m7000.root" };
+      xAna(inpaths, 1,"minitree_XZG_ZToMuMu_m_7000.root", 0, -1, -1, 0);
+    }
+
+
+  }
+}
